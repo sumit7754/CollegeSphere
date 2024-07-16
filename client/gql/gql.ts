@@ -17,6 +17,7 @@ const documents = {
     "\n  #graphql\n  mutation FollowUser($to: ID!) {\n    followUser(to: $to)\n  }\n": types.FollowUserDocument,
     "\n  #grahql\n  mutation UnfollowUser($to: ID!) {\n    unfollowUser(to: $to)\n  }\n": types.UnfollowUserDocument,
     "\n  #graphql\n\n  query GetAllPosts {\n    getAllPosts {\n      id\n      content\n      imageURL\n      author {\n        id\n        firstName\n        lastName\n        profileImageURL\n      }\n    }\n  }\n": types.GetAllPostsDocument,
+    "\n  #graphql\n  query GetSignedURLForPost($imageName: String!, $imageType: String!) {\n    getSignedURLForPost(imageName: $imageName, imageType: $imageType)\n  }\n": types.GetSignedUrlForPostDocument,
     "\n  #graphql\n  query VerifyUserGoogleToken($token: String!) {\n    verifyGoogleToken(token: $token)\n  }\n": types.VerifyUserGoogleTokenDocument,
     "\n  query Query {\n    getCurrentUser {\n      id\n      firstName\n      email\n      profileImageURL\n      lastName\n      recommendedUsers {\n        id\n        firstName\n        lastName\n        profileImageURL\n      }\n    }\n  }\n": types.QueryDocument,
     "\n  query GetUserById($id: ID!) {\n    getUserById(id: $id) {\n      id\n      firstName\n      lastName\n      email\n      profileImageURL\n      follower {\n        id\n        firstName\n        lastName\n        profileImageURL\n      }\n      following {\n        id\n        firstName\n        lastName\n        profileImageURL\n      }\n\n      posts {\n        id\n        content\n        imageURL\n      }\n    }\n  }\n": types.GetUserByIdDocument,
@@ -52,6 +53,10 @@ export function graphql(source: "\n  #grahql\n  mutation UnfollowUser($to: ID!) 
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  #graphql\n\n  query GetAllPosts {\n    getAllPosts {\n      id\n      content\n      imageURL\n      author {\n        id\n        firstName\n        lastName\n        profileImageURL\n      }\n    }\n  }\n"): (typeof documents)["\n  #graphql\n\n  query GetAllPosts {\n    getAllPosts {\n      id\n      content\n      imageURL\n      author {\n        id\n        firstName\n        lastName\n        profileImageURL\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  #graphql\n  query GetSignedURLForPost($imageName: String!, $imageType: String!) {\n    getSignedURLForPost(imageName: $imageName, imageType: $imageType)\n  }\n"): (typeof documents)["\n  #graphql\n  query GetSignedURLForPost($imageName: String!, $imageType: String!) {\n    getSignedURLForPost(imageName: $imageName, imageType: $imageType)\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

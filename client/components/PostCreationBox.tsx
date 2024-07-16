@@ -3,16 +3,12 @@ import { MdAddAPhoto } from 'react-icons/md';
 import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCreatePost } from '@/hooks/post';
+import { graphqlClient } from '@/clients/api';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+import { getSignedURLForPost } from '@/graphql/query/post';
 
-interface User {
-  id: string;
-  firstName: string;
-  lastName?: string;
-  email: string;
-  profileImageURL?: string;
-}
-
-const PostCreationBox: React.FC<{ user: User | null }> = ({ user }) => {
+const PostCreationBox = ({ user }) => {
   const { mutate } = useCreatePost();
   const [content, setContent] = useState('');
   const [imageURL, setImageURL] = useState('');
@@ -32,22 +28,51 @@ const PostCreationBox: React.FC<{ user: User | null }> = ({ user }) => {
     );
   }, [content, imageURL, mutate]);
 
+  const handleInputChangeFile = useCallback((input) => {
+    return async (event) => {
+      event.preventDefault();
+      const file = input.files?.item(0);
+      if (!file) return;
+
+      try {
+        const { getSignedURLForPost: signedURL } = await graphqlClient.request(getSignedURLForPost, {
+          imageName: file.name,
+          imageType: file.type,
+        });
+
+        if (signedURL) {
+          toast.loading('Uploading...', { id: '2' });
+          await axios.put(signedURL, file, {
+            headers: {
+              'Content-Type': file.type,
+            },
+          });
+
+          toast.success('Upload Completed', { id: '2' });
+
+          const url = new URL(signedURL);
+          const myFilePath = `${url.origin}${url.pathname}`;
+          console.log('Final Image URL:', myFilePath);
+          setImageURL(myFilePath);
+        }
+      } catch (error) {
+        toast.error('Upload Failed', { id: '2' });
+        console.error('Upload error:', error);
+      }
+    };
+  }, []);
+
   const handleSelectImage = useCallback(() => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
-    // input.onchange = (event) => {
-    //   const file = event.target.files?.[0];
-    //   if (file) {
-    //     const reader = new FileReader();
-    //     reader.onload = () => {
-    //       setImageURL(reader.result as string);
-    //     };
-    //     reader.readAsDataURL(file);
-    //   }
-    // };
+
+    const handlerFn = handleInputChangeFile(input);
+
+    input.addEventListener('change', handlerFn);
+
     input.click();
-  }, []);
+  }, [handleInputChangeFile]);
 
   return (
     <div className="bg-gray-800 p-5 rounded-lg shadow-lg">
@@ -56,7 +81,7 @@ const PostCreationBox: React.FC<{ user: User | null }> = ({ user }) => {
           {user?.profileImageURL && (
             <Avatar>
               <AvatarImage src={user.profileImageURL} />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>{user.firstName[0]}</AvatarFallback>
             </Avatar>
           )}
         </div>

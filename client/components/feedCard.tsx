@@ -1,10 +1,9 @@
-// /components/FeedCard.tsx
-
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { FaHeart, FaRegComment, FaShareAlt } from 'react-icons/fa';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Post } from '@/gql/graphql';
+import Image from 'next/image';
 
 interface FeedCardProps {
   data: Post;
@@ -53,7 +52,11 @@ const FeedCard: React.FC<FeedCardProps> = ({ data, name, profileImage }) => {
           </button>
         )}
       </div>
-
+      {data.imageURL && (
+        <div className="mb-4">
+          <Image src={data.imageURL} alt="Post Image" width={600} height={400} className="rounded-lg" />
+        </div>
+      )}
       <div className="flex justify-between border-t border-gray-700 pt-4">
         <div className="flex items-center text-gray-400 hover:text-red-500 active:text-red-500 cursor-pointer">
           <FaHeart className="mr-2 text-xl" />
