@@ -123,45 +123,6 @@ Thank you for the clarification. Let's update the authentication flow diagram an
 
 Below is a structured documentation for your College Sphere project, focusing on the authentication system and the `getCurrentUser` feature. The documentation includes a process flow, diagrams, and a detailed explanation of the technology choices.
 
----
-
-## College Sphere Project
-
-### Overview
-
-College Sphere is a social media platform designed for college students. The platform includes features such as user authentication, real-time feeds, notifications, multimedia post creation, and user profiles. This documentation focuses on two key features: the authentication system and the `getCurrentUser` feature.
-
----
-
-### 1. Authentication System
-
-#### Process Flow
-
-1. **Frontend (Google OAuth):**
-   - User initiates sign-up or sign-in via Google OAuth.
-   - Google credentials are generated upon successful sign-in.
-
-2. **Send Credentials to Backend:**
-   - The Google OAuth credentials are sent to the backend using a GraphQL query.
-
-3. **Verify Token:**
-   - Backend verifies the Google token by sending a request to Google's tokeninfo endpoint: `https://oauth2.googleapis.com/tokeninfo?id_token=<googleToken>`.
-
-4. **User Data Handling:**
-   - If the user data exists in the database, generate a JWT token.
-   - If the user data does not exist, create a new user account in the database, then generate a JWT token.
-
-5. **Return JWT Token:**
-   - The JWT token is sent back to the frontend and stored in local storage.
-
-6. **Subsequent Requests:**
-   - For any subsequent requests to the backend, the JWT token is included in the request header as `Authorization: Bearer <token>`.
-
-7. **Backend Middleware:**
-   - The middleware decodes the JWT to extract user information.
-   - The decoded user information is used to perform the requested backend tasks.
-
-
 ### 2. Get Current User
 
 #### Process Flow
